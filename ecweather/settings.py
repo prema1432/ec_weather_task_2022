@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "rest_framework",
+    "rest_framework_gis",
     'ecapp.apps.EcappConfig',
     'leaflet',
 ]
@@ -144,8 +146,6 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / 'static_prod'
 
-
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'
 }
-

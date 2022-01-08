@@ -29,3 +29,7 @@ body {
     font-size: 25px;
     font-weight: bold;
 }
+#map {
+  height: 100%;
+  width: 100%;
+}
