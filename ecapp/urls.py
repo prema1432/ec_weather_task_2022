@@ -5,6 +5,6 @@ from ecapp.views import MarkersMapView
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path("visited_map/", MarkersMapView.as_view()),
+    path("visited_map/", MarkersMapView.as_view(),name="visited_map"),
 
 ]

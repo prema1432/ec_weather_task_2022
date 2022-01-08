@@ -15,7 +15,7 @@ def index(request):
             try:
                 cord = request.POST.get('cord')
                 pointsRes = requests.get(get_points_url + cord).json()
-                lan=pointsRes['geometry']
+                lan=pointsRes['geometry']['coordinates']
                 lan2=pointsRes['properties']
                 city = pointsRes['properties']['relativeLocation']['properties']['city']
                 state = pointsRes['properties']['relativeLocation']['properties']['state']
@@ -40,7 +40,7 @@ def index(request):
                 shortDesc = hourlyRes["properties"]['periods'][0]['shortForecast']
                 detailedforecastDesc = hourlyRes["properties"]['periods'][0]['detailedForecast']
                 messages.success(request, 'Data Fetched Successfully')
-                WeatherTask.objects.get_or_create(cord=cord,name=temp_name,location=Point(40.8471,-93.8679),temp=temp,humidit_validtime=humidit_validtime,humidit_value=humidit_value,city=city,state=state,timezone_c=timezone_country,desc=shortDesc,temp_windDirection=temp_windDirection,temp_windSpeed=temp_windSpeed,temp_temperatureUnit=temp_temperatureUnit,temp_isDaytime=temp_isDaytime,temp_endTime=temp_endTime,temp_startTime=temp_startTime,detailedforecastDesc=detailedforecastDesc,img=img)
+                WeatherTask.objects.get_or_create(cord=cord,name=temp_name,location=Point(lan),temp=temp,humidit_validtime=humidit_validtime,humidit_value=humidit_value,city=city,state=state,timezone_c=timezone_country,desc=shortDesc,temp_windDirection=temp_windDirection,temp_windSpeed=temp_windSpeed,temp_temperatureUnit=temp_temperatureUnit,temp_isDaytime=temp_isDaytime,temp_endTime=temp_endTime,temp_startTime=temp_startTime,detailedforecastDesc=detailedforecastDesc,img=img)
                 # WeatherTask.objects.get_or_create(cord=cord,name=temp_name,temp=temp,humidit_validtime=humidit_validtime,humidit_value=humidit_value,city=city,state=state,timezone_c=timezone_country,desc=shortDesc,temp_windDirection=temp_windDirection,temp_windSpeed=temp_windSpeed,temp_temperatureUnit=temp_temperatureUnit,temp_isDaytime=temp_isDaytime,temp_endTime=temp_endTime,temp_startTime=temp_startTime,detailedforecastDesc=detailedforecastDesc,img=img)
                 context = {
                     'cord': cord,
