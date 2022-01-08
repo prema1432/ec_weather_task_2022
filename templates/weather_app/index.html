@@ -1,0 +1,144 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <title>EC Info - Assignment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+          integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+            integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+            crossorigin=""></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mystyles.css' %}"/>
+    <script type="text/javascript" src="{% static 'js/alert.js' %}"></script>
+
+</head>
+
+<body>
+<section class="section">
+
+    <div class="container">
+        <div class="header">
+            <h1>Weather Task</h1>
+            <br>
+        </div>
+        <div class="columns">
+            <div class="column is-offset-4 is-4">
+                <!-- Input and Search -->
+                <form action="{% url 'index' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="field has-addons">
+                        <div class="control is-expanded">
+                            <input class="input" type="text" id="cord" name="cord" placeholder="Latitude,Longitude">
+                        </div>
+                    </div>
+
+                    <div class="control" style="text-align: center;">
+                        <button class="button is-info">
+                            Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="weather_body">
+
+    <div class="container-fluid">
+
+
+        {% include 'weather_app/alerts.html' %}
+        <div class="row">
+            {% if temp %}
+                <div class="col-md-6">
+                    <div class="map_data_display">
+                        <br>
+                        <p class="text-center ff25"> {{ temp_name }} {% if temp_isDaytime == 'False' %} It's
+                            Daytime {% else %} {% endif %}</p>
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <img src="{{ img }}" alt="temparature_image">
+                            </div>
+                            <div class="col-md-4">
+                                <p style="font-size: 25px">Temp <b> {{ temp }}</b> {{ temp_temperatureUnit }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p style="text-align: right">{{ city }} <br>
+                                    {{ state }} <br>
+                                    {{ timezone_c }}</p>
+                                <p style="text-align: right">{{ temp_startTime }} <br>{{ temp_endTime }}</p>
+                            </div>
+
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>Humidity : <b> {{ humidit_value }}% </b></p>
+                                <p>{{ humidit_validtime }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>Wind Speed : <b>{{ temp_windSpeed }}</b></p>
+                                <p>Wind Direction : <b>{{ temp_windDirection }}</b></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p><b>ShortForecast :</b> {{ desc }}</p>
+                                <p><b>detailedForecast :</b> {{ detailedforecastDesc }}</p>
+                                <hr>
+                                <p class="text-center">Co Oridnates : {{ cord }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            {% else %}
+                <p style="text-align: center;">Enter Your CoOrdinates Data ... </p>
+            {% endif %}
+            <div class="col-md-6">
+                <div id="mapid"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    //map initialization
+    var mymap = L.map('mapid').setView([38.95, -102.89], 5);
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 15,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: 'pk.eyJ1IjoicHJlbWEyIiwiYSI6ImNreTRvOTlxMzA4d3kycHMxcnMwMGJnN3AifQ.sdHQVJCIceSkotkMMBqelQ'
+    }).addTo(mymap);
+
+    //Onclick Popup function
+    function onMapClick(e) {
+        if (marker) {
+            map.removeLayer(marker);
+            map.removeControl(marker);
+
+        }
+        var marker = L.marker(e.latlng).addTo(mymap);
+        var l1 = e.latlng.lat
+        marker.bindPopup('<h3>Your Co-ordinates</h3><br>' + marker.getLatLng()).openPopup();
+        var lat_lng = e.latlng.lat.toFixed(4) + "," + e.latlng.lng.toFixed(4)
+        document.getElementById("cord").value = lat_lng
+    }
+
+    mymap.on('click', onMapClick);
+</script>
+</body>
